@@ -25,6 +25,8 @@ func ConsumeMatchData(body []byte) error {
 		return errors.Wrap(err, "Error in ConsumeMatchData")
 	}
 
+	//Need to do something with stats now
+
 	log := fmt.Sprintf("MatchData: %v", summonerStats)
 
 	fmt.Println(log)
@@ -37,6 +39,7 @@ func FindSummonerStats(data obj.MatchData, summonerIdentity *obj.ParticipantIden
 
 	stats := new(obj.ParticipantStatsDto)
 
+	//Finding the participant stats using the participant id
 	for _, participant := range match.Participants {
 		if participant.ParticipantId == summonerIdentity.ParticipantId {
 			stats = &participant.Stats
@@ -54,6 +57,8 @@ func FindSummonerIdentity(data obj.MatchData) (*obj.ParticipantIdentityDto, erro
 	participants := data.Match.ParticipantIdentities
 	identity := new(obj.ParticipantIdentityDto)
 
+	//Loops through Participant identities to to get a match on Summoner Name
+	//Since Summoner Name is in recieved data we need to get the participant id based on it
 	for _, participant := range participants {
 		if participant.Player.SummonerName == data.SummonerName {
 			identity.Player = participant.Player
