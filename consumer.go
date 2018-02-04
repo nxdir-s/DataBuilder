@@ -2,10 +2,15 @@ package main
 
 import (
 	obj "dataBuilder/objects"
+	util "dataBuilder/util"
 	"encoding/json"
 	"fmt"
 
 	"github.com/pkg/errors"
+)
+
+const (
+	accountId int64 = 47440170
 )
 
 func ConsumeMatchData(body []byte) error {
@@ -25,11 +30,26 @@ func ConsumeMatchData(body []byte) error {
 		return errors.Wrap(err, "Error in ConsumeMatchData")
 	}
 
+	accId := summonerIdentity.Player.AccountId
+
+	stats := *summonerStats
+
+	sumStats := obj.SummonerMatchStats{
+		AccountId: accId,
+		MatchId:   matchData.Match.GameId,
+		Stats:     stats,
+	}
+
 	//Need to do something with stats now
+	jsonLog, _ := json.Marshal(sumStats)
 
-	log := fmt.Sprintf("MatchData: %v", summonerStats)
-
+	log := fmt.Sprintf("MatchData: %v", string(jsonLog))
 	fmt.Println(log)
+
+	err = util.Publish(sumStats, "dataApi/summonerStats")
+	if err != nil {
+		return errors.Wrap(err, "Error in ConsumeMatchData")
+	}
 
 	return nil
 }
