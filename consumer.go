@@ -25,7 +25,7 @@ func ConsumeMatchData(body []byte) error {
 		return errors.Wrap(err, "Error in ConsumeMatchData")
 	}
 
-	summonerStats, err := FindSummonerStats(matchData, summonerIdentity)
+	summonerStats, participantDto, err := FindSummonerStats(matchData, summonerIdentity)
 	if err != nil {
 		return errors.Wrap(err, "Error in ConsumeMatchData")
 	}
@@ -35,9 +35,11 @@ func ConsumeMatchData(body []byte) error {
 	stats := *summonerStats
 
 	sumStats := obj.SummonerMatchStats{
-		AccountId: accId,
-		MatchId:   matchData.Match.GameId,
-		Stats:     stats,
+		AccountId:  accId,
+		MatchId:    matchData.Match.GameId,
+		ChampionId: participantDto.ChampionId,
+		Stats:      stats,
+		Timeline:   participantDto.Timeline,
 	}
 
 	//Need to do something with stats now
@@ -54,23 +56,25 @@ func ConsumeMatchData(body []byte) error {
 	return nil
 }
 
-func FindSummonerStats(data obj.MatchData, summonerIdentity *obj.ParticipantIdentityDto) (*obj.ParticipantStatsDto, error) {
+func FindSummonerStats(data obj.MatchData, summonerIdentity *obj.ParticipantIdentityDto) (*obj.ParticipantStatsDto, *obj.ParticipantDto, error) {
 	match := data.Match
 
 	stats := new(obj.ParticipantStatsDto)
+	participantInfo := new(obj.ParticipantDto)
 
 	//Finding the participant stats using the participant id
 	for _, participant := range match.Participants {
 		if participant.ParticipantId == summonerIdentity.ParticipantId {
 			stats = &participant.Stats
+			participantInfo = &participant
 		}
 	}
 
 	if stats == nil {
-		return nil, errors.New("Could not find summonerStats in FindSummonerStats")
+		return nil, nil, errors.New("Could not find summonerStats in FindSummonerStats")
 	}
 
-	return stats, nil
+	return stats, participantInfo, nil
 }
 
 func FindSummonerIdentity(data obj.MatchData) (*obj.ParticipantIdentityDto, error) {
