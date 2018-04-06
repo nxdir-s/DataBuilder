@@ -36,6 +36,8 @@ func ConsumeMatchData(body []byte) error {
 
 	sumStats := obj.SummonerMatchStats{
 		AccountId:  accId,
+		SeasonId:   matchData.Match.SeasonId,
+		QueueId:    matchData.Match.QueueId,
 		MatchId:    matchData.Match.GameId,
 		ChampionId: participantDto.ChampionId,
 		Stats:      stats,
@@ -67,6 +69,7 @@ func FindSummonerStats(data obj.MatchData, summonerIdentity *obj.ParticipantIden
 		if participant.ParticipantId == summonerIdentity.ParticipantId {
 			stats = &participant.Stats
 			participantInfo = &participant
+			break
 		}
 	}
 
