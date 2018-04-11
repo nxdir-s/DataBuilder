@@ -36,6 +36,7 @@ func ConsumeMatchData(body []byte) error {
 
 	sumStats := obj.SummonerMatchStats{
 		AccountId:  accId,
+		Timestamp:  matchData.Timestamp,
 		SeasonId:   matchData.Match.SeasonId,
 		QueueId:    matchData.Match.QueueId,
 		MatchId:    matchData.Match.GameId,
