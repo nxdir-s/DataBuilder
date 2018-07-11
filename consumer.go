@@ -59,6 +59,10 @@ func ConsumeMatchData(body []byte) error {
 	return nil
 }
 
+func ConsumeDashboard(body []byte) error {
+
+}
+
 func FindSummonerStats(data obj.MatchData, summonerIdentity *obj.ParticipantIdentityDto) (*obj.ParticipantStatsDto, *obj.ParticipantDto, error) {
 	match := data.Match
 
